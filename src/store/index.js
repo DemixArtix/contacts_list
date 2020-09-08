@@ -1,7 +1,9 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import contacts from './modules/contacts'
+import svg from './modules/svg'
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
@@ -11,5 +13,7 @@ export default new Vuex.Store({
   actions: {
   },
   modules: {
+    contacts,
+    svg,
   }
 })
