@@ -2,7 +2,7 @@
   <div class="contact-table__item">
     <template v-if="currentTemplate === 'change'">
       <input v-if="name !== 'name'" ref="nameInput" type="text" class="contact-table__name" placeholder="name" :value="name">
-      <span v-if="name === 'name'" ref="nameInput" class="contact-table__name">{{name}} : </span>
+      <span v-if="name === 'name'" ref="nameInput" class="contact-table__name name">{{name}} : </span>
       <input ref="valueInput" type="text" class="contact-table__value" placeholder="value" :value="value">
       <div class="contact-table__buttons">
         <button class="contact-table__button ok" @click="setCurrentTemplate('ok')" v-html="this.svg.ok"></button>
@@ -127,72 +127,37 @@
     height: 10px;
     color: black;
   }
+  .name {
+    margin-right: auto;
+  }
   .contact {
     &-table {
       &__item {
         display: flex;
-        justify-content: space-between;
-        input {
-          font-size: 18px;
-          /*border: solid #a3ccd9;*/
-          /*border-width: 0 0 2px 2px;*/
-          padding-left: 10px;
-          border-radius: 5px;
-          border-width: 0 0;
-          opacity: 0.3;
-          transition: 0.5s;
-          &:focus {
-            opacity: 1;
-            outline: none;
-            background-image: linear-gradient(0.25turn, lightgray, white);
-
-          }
-        }
+        justify-content: flex-start;
+        position: relative;
+        margin-top: 10px;
+        padding-top: 15px;
       }
       &__name {
         text-transform: capitalize;
-
+        margin-right: auto;
+        position: absolute;
+        font-size: .8rem;
+        left: 0;
+        top: 0;
       }
       &__value {
-        margin-left: auto;
-        margin-right: 20px;
+        /*margin-right: 20px;*/
+        margin-top: 3px;
       }
       &__buttons {
         display: flex;
         align-items: center;
+        margin-left: 10px;
+        margin-right: 3px;
       }
       &__button {
-        background-color: #fff;
-        border: none;
-        width: 30px;
-        height: 30px;
-        border-radius: 5px;
-        padding-top: 3px;
-        opacity: 0.5;
-        transition: 0.2s;
-        &:focus {
-          outline: none;
-        }
-        &:hover {
-          opacity: 1;
-/*          &.ok {
-            background-color: green;
-            color: #fff;
-          }
-          &.cancel {
-            padding-top: 2px;
-            background-color: red;
-            color: #fff;
-          }
-          &.change {
-            background-color: orange;
-            color: #fff;
-          }
-          &.delete {
-            background-color: red;
-            color: #fff;
-          }*/
-        }
         &.ok {
           padding-top: 5px;
           color: green;

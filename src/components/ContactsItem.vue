@@ -1,20 +1,20 @@
 <template>
   <li class="contacts-card" @click="choiceOfContact">
       <div class="contacts-card__buttons">
-        <button @click.stop="confirmationTemplate = true">Delete Contact</button>
+        <button class="contacts-card__delete" @click.stop="confirmationTemplate = true">Delete Contact</button>
       </div>
       <div class="contacts-table">
         <div class="contacts-table__field"  v-for="(contactField, index) in contactInfo" :key="index">
-          <span class="contacts-table__name">{{contactField.name}} : </span>
-          <span class="contacts-table__value">{{contactField.value}}</span>
+            <span class="contacts-table__name">{{contactField.name}} : </span>
+            <span class="contacts-table__value">{{contactField.value}}</span>
         </div>
       </div>
     <template v-if="confirmationTemplate">
       <div class="confirm-card" @click.stop>
         <span class="confirm-card__text">Delete contact</span>
         <div class="confirm-card__buttons">
-          <button @click="onDeleteContact">Yes</button>
-          <button @click="confirmationTemplate = false">No</button>
+          <button @click="onDeleteContact" class="green">Yes</button>
+          <button @click="confirmationTemplate = false" class="red">No</button>
         </div>
       </div>
     </template>
@@ -22,7 +22,7 @@
 </template>
 
 <script>
-  import {mapActions} from 'vuex';
+  import {mapActions, mapGetters} from 'vuex';
 
   export default {
     name: "ContactsItem",
@@ -48,20 +48,31 @@
         this.deleteContact(this.index);
         this.confirmationTemplate = false;
       },
+    },
+    computed: {
+      ...mapGetters('svg', ['svg']),
     }
   }
 </script>
 
 <style scoped lang="scss">
+    .green {
+      color: green;
+    }
+    .red {
+      color: red;
+    }
+
     .contacts {
       &-card {
         position: relative;
-        font-size: 22px;
-        border: 2px solid #000;
+        border: 2px solid lightcyan;
         border-radius: 5px;
         padding: 20px;
-        max-width: 30%;
-        margin: 0 auto 20px;
+        /*max-width: 260px;*/
+        &:hover {
+          border-color: lightblue;
+        }
         &__buttons {
           display: flex;
           justify-content: flex-end;
@@ -69,20 +80,31 @@
             margin: 5px;
           }
         }
+        &__delete {
+          border: 1px solid red;
+          color: red;
+        }
       }
       &-table {
         display: flex;
         flex-direction: column;
-        font-size: 22px;
+        padding: 0 10px;
         &__field {
-
-          display: flex;
-          justify-content: space-between;
+          position: relative;
+          padding-top: 10px;
+          padding-bottom: 10px;
+          margin-right: auto;
         }
         &__name {
+          position: absolute;
+          left: 0;
+          top: 0;
+          font-size: 10px;
           text-transform: capitalize;
         }
         &__value {
+        }
+        &__line {
         }
       }
     }
@@ -95,9 +117,29 @@
     background-color: #fff;
     border: 2px solid #000;
     border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
     &__text {
       display: block;
-      margin-top: 20px;
+      padding: 20px;
+    }
+    &__buttons {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      button {
+        font-size: 18px;
+        border: 1px solid;
+        margin: 10px;
+        padding: 5px 20px ;
+        &.red {
+          border-color: red;
+        }
+        &.green {
+          border-color: green;
+        }
+      }
     }
   }
 </style>

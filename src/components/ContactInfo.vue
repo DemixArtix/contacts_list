@@ -10,18 +10,27 @@
       </button>
       <div v-else class="contact-add">
         <div class="contact-add__form">
-          <input id="nameInput" ref="nameInput" type="text" class="contact-add__name" placeholder="name">
-          <label v-if="emptyName" class="contact-add__label" for="nameInput">The field must not be empty</label>
-        </div>
-        <div class="contact-add__form">
-          <input id="valueInput" ref="valueInput" type="text" class="contact-add__value" placeholder="value">
-          <label v-if="emptyValue" class="contact-add__label" for="valueInput">The field must not be empty</label>
+          <div class="contact-add__item">
+            <input id="nameInput" ref="nameInput" type="text" class="contact-add__name" placeholder="name">
+            <label v-if="emptyName" class="contact-add__label" for="nameInput">The field must not be empty</label>
+          </div>
+          <div class="contact-add__item">
+            <input id="valueInput" ref="valueInput" type="text" class="contact-add__value" placeholder="value">
+            <label v-if="emptyValue" class="contact-add__label" for="valueInput">The field must not be empty</label>
+          </div>
         </div>
         <div class="contact-add__buttons">
-          <button @click="confirmAdd">Save</button>
-          <button @click="addTemplate = false">Cancel</button>
+          <button @click="confirmAdd" v-html="this.svg.ok"></button>
+          <button @click="cancelAdd" v-html="this.svg.cancel"></button>
         </div>
       </div>
+    </div>
+    <div
+        v-if="this.lastAction.nameAction !== '' &&
+        this.lastAction.indexContact === this.indexOfCurrentContact"
+        class="contact-card__buttons">
+      <span>Cancel last action</span>
+      <button @click="onCancelLastAction" v-html="this.svg.backspace"></button>
     </div>
   </div>
 </template>
@@ -47,16 +56,18 @@
       this.contactInfo = this.contactsList[this.idContact];
       this.setCurrentContact(
         {
-          // currentContact: this.contactInfo,
           indexOfCurrentContact: this.idContact
         });
     },
     computed: {
-      ...mapGetters('contacts', ['contactsList']),
+      ...mapGetters('contacts', ['contactsList', 'lastAction', 'indexOfCurrentContact']),
       ...mapGetters('svg', ['svg'])
     },
     methods: {
-      ...mapActions('contacts', ['setCurrentContact', 'addField', 'setLastAction']),
+      ...mapActions('contacts', ['setCurrentContact', 'addField', 'setLastAction', "cancelLastAction"]),
+      onCancelLastAction() {
+        this.cancelLastAction();
+      },
       confirmAdd() {
           this.emptyName = this.emptyValue = false;
           const name = this.$refs.nameInput.value;
@@ -83,6 +94,9 @@
             return this.emptyValue = true;
           }
           this.emptyName = this.emptyValue = this.addTemplate = false;
+      },
+      cancelAdd() {
+        return this.addTemplate = this.emptyName = this.emptyValue = false
       }
     }
 
@@ -95,17 +109,50 @@
        font-size: 22px;
        border: 2px solid #000;
        border-radius: 5px;
-       padding: 20px;
-       max-width: 40%;
+       padding: 20px 20px 30px;
+       width: fit-content;
        margin: 0 auto 20px;
+       min-width: 300px;
+       &__buttons {
+         display: flex;
+         justify-content: flex-end;
+         align-items: center;
+         transition: 0.5s;
+         color: orangered;
+         position: relative;
+         width: 200px;
+         margin-left: auto;
+         margin-top: 10px;
+         &:hover {
+           span {
+             opacity: 0.5;
+             right: 50px;
+           }
+         }
+         span {
+           transition: 0.5s;
+           position: absolute;
+           display: block;
+           font-size: 1rem;
+           opacity: 0;
+           right: 0;
+         }
+         button {
+           margin-right: 3px;
+           color: orangered;
+           position: relative;
+         }
+       }
      }
      &-table {
        display: flex;
        flex-direction: column;
        font-size: 22px;
        justify-content: space-between;
+
        &__item {
          display: flex;
+         flex-direction: row;
          justify-content: space-between;
        }
        &__button_add {
@@ -113,22 +160,21 @@
          align-self: flex-end;
          justify-content: flex-end;
          align-items: center;
-         width: 30%;
+         width: 120px;
          border-radius: 10px;
          border: none;
-         padding: 5px 0 5px 10px;
-         font-weight: bold;
+         padding: 10px 8px;
          background-color: #fff;
          opacity: 0.5;
          transition: 0.5s;
          position: relative;
+         margin-top: 15px;
          &:hover {
 
            opacity: 1;
            span {
-             transition: 0.5s;
              &:first-child {
-               margin-left: 0;
+               right: 50px;
                color: green;
                opacity: 0.6;
              }
@@ -137,36 +183,48 @@
            }
          }
          span {
-           font-size: 18px;
+           font-size: 1rem;
+           transition: 0.5s;
            &:first-child {
-             left: 20px;
-             margin-left: 50px;
+             right: 0;
              position: absolute;
              opacity: 0;
            }
            &:last-child {
              text-align: center;
              color: green;
-             padding: 6px 6px 2px;
              width: 20px;
+             border-radius: 50%;
            }
          }
        }
      }
      &-add{
        display: flex;
+       justify-content: flex-start;
        &__buttons {
-         min-width: 120px;
-         margin-left: 20px;
-         button {
-           width: 50%;
+         display: flex;
+         margin-right: 3px;
+         margin-left: auto;
+         align-items: flex-end;
+         & button {
+           &:first-child {
+             color: green;
+           }
+           &:last-child {
+             color: red;
+           }
          }
        }
        &__name {
          text-transform: capitalize;
+         margin-right: auto;
+         font-size: .8rem;
        }
        &__value {
-         margin-left: auto;
+       }
+       &__value, &__name {
+         height: 30px;
        }
        &__label {
          font-size: 12px;
@@ -177,11 +235,10 @@
        &__form {
          display: flex;
          flex-direction: column;
-         justify-content: space-between;
-         margin-left: auto;
-         &:first-child {
-           margin-right: 14px;
-         }
+       }
+       &__item {
+         display: flex;
+         flex-direction: column;
        }
      }
 
